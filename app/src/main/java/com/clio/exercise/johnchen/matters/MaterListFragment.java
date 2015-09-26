@@ -1,6 +1,8 @@
 package com.clio.exercise.johnchen.matters;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
 import android.view.View;
@@ -8,6 +10,17 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.clio.exercise.johnchen.matters.dummy.DummyContent;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A list fragment representing a list of Maters. This fragment
@@ -69,13 +82,8 @@ public class MaterListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        (new AsyncListViewLoader()).execute("http://google.com");
 
-        // TODO: replace with a real list adapter.
-        setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(
-                getActivity(),
-                android.R.layout.simple_list_item_activated_1,
-                android.R.id.text1,
-                DummyContent.ITEMS));
     }
 
     @Override
@@ -147,5 +155,72 @@ public class MaterListFragment extends ListFragment {
         }
 
         mActivatedPosition = position;
+    }
+
+    private class AsyncListViewLoader extends AsyncTask<String, Void, List<Matter>> {
+        private final ProgressDialog dialog = new ProgressDialog(getActivity());
+
+        @Override
+        protected void onPostExecute(List<Matter> result) {
+            super.onPostExecute(result);
+            dialog.dismiss();
+            // TODO: replace with a real list adapter.
+            setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(
+                    getActivity(),
+                    android.R.layout.simple_list_item_activated_1,
+                    android.R.id.text1,
+                    DummyContent.ITEMS));
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            dialog.setMessage("Downloading matters...");
+            dialog.show();
+        }
+
+        @Override
+        protected List<Matter> doInBackground(String... params) {
+            List<Matter> result = new ArrayList<Matter>();
+
+            try {
+                URL u = new URL(params[0]);
+
+                HttpURLConnection conn = (HttpURLConnection) u.openConnection();
+                conn.setRequestMethod("GET");
+
+                conn.connect();
+                InputStream is = conn.getInputStream();
+
+                // Read the stream
+                byte[] b = new byte[1024];
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+                while ( is.read(b) != -1)
+                    baos.write(b);
+
+                String JSONResp = new String(baos.toByteArray());
+
+                /*JSONArray arr = new JSONArray(JSONResp);
+                for (int i=0; i < arr.length(); i++) {
+                    result.add(convertMatter(arr.getJSONObject(i)));
+                }*/
+
+                return result;
+            }
+            catch(Throwable t) {
+                t.printStackTrace();
+            }
+            return null;
+        }
+
+        private Matter convertMatter(JSONObject obj) throws JSONException {
+            String id = obj.getString("id");
+            String displayNumber = obj.getString("display_number");
+            String description = obj.getString("description");
+
+            return new Matter(id, displayNumber, description);
+        }
+
     }
 }
