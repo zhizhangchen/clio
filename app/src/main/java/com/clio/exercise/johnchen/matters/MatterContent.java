@@ -67,13 +67,12 @@ public class MatterContent {
     public class Matter {
         public String id;
         public String displayNumber;
+        public String clientName;
         public String description;
+        public String openDate;
+        public String status;
 
-
-        public Matter(String id, String displayNumber, String description) {
-            this.id = id;
-            this.displayNumber = displayNumber;
-            this.description = description;
+        Matter() {
         }
 
         @Override
@@ -146,11 +145,14 @@ public class MatterContent {
         }
 
         private MatterContent.Matter convertMatter(JSONObject obj) throws JSONException {
-            String id = obj.getString("id");
-            String displayNumber = obj.getString("display_number");
-            String description = obj.getString("description");
-
-            return new MatterContent.Matter(id, displayNumber, description);
+            Matter matter = new Matter();
+            matter.id = obj.getString("id");
+            matter.displayNumber = obj.getString("display_number");
+            matter.clientName = obj.getJSONObject("client").getString("name");
+            matter.description = obj.getString("description");
+            matter.status = obj.getString("status");
+            matter.openDate = obj.getString("open_date");
+            return matter;
         }
     }
 }
