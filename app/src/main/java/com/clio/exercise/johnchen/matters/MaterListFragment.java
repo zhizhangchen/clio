@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -82,7 +83,7 @@ public class MaterListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        (new AsyncListViewLoader()).execute("http://google.com");
+        (new AsyncListViewLoader()).execute("https://app.goclio.com/api/v2/matters");
 
     }
 
@@ -165,11 +166,11 @@ public class MaterListFragment extends ListFragment {
             super.onPostExecute(result);
             dialog.dismiss();
             // TODO: replace with a real list adapter.
-            setListAdapter(new ArrayAdapter<DummyContent.DummyItem>(
+            setListAdapter(new ArrayAdapter<Matter>(
                     getActivity(),
                     android.R.layout.simple_list_item_activated_1,
                     android.R.id.text1,
-                    DummyContent.ITEMS));
+                    result));
         }
 
         @Override
@@ -187,6 +188,9 @@ public class MaterListFragment extends ListFragment {
                 URL u = new URL(params[0]);
 
                 HttpURLConnection conn = (HttpURLConnection) u.openConnection();
+                conn.setRequestProperty("Authorization", "Bearer Xzd7LAtiZZ6HBBjx0DVRqalqN8yjvXgzY5qaD15a");
+                conn.setRequestProperty("Content-Type", "application/json");
+                conn.setRequestProperty("Accept", "application/json");
                 conn.setRequestMethod("GET");
 
                 conn.connect();
@@ -196,15 +200,18 @@ public class MaterListFragment extends ListFragment {
                 byte[] b = new byte[1024];
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-                while ( is.read(b) != -1)
+                while ( is.read(b) != -1) {
                     baos.write(b);
+                    Arrays.fill(b, (byte) 0);
+                }
 
                 String JSONResp = new String(baos.toByteArray());
 
-                /*JSONArray arr = new JSONArray(JSONResp);
+                JSONObject obj = new JSONObject(JSONResp);
+                JSONArray arr = obj.getJSONArray("matters");
                 for (int i=0; i < arr.length(); i++) {
                     result.add(convertMatter(arr.getJSONObject(i)));
-                }*/
+                }
 
                 return result;
             }
