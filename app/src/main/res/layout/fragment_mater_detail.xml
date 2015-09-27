@@ -1,5 +1,107 @@
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:id="@+id/mater_detail"
     style="?android:attr/textAppearanceLarge" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:padding="16dp" android:textIsSelectable="true"
-    tools:context=".MaterDetailFragment" />
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MaterDetailFragment" >
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="match_parent"
+            android:paddingTop="16dp"
+            android:paddingBottom="8dp"
+            android:textColor="@android:color/black"
+            android:textSize="20dp"
+            android:text="display number"
+            android:gravity="center"
+            android:layout_height="wrap_content" android:id="@+id/display_number"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:gravity="center"
+            android:text="description"
+            android:paddingBottom="16dp"
+            android:layout_height="wrap_content" android:id="@+id/description"/>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:background="#FFDDDDDD"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="0px"
+            android:layout_weight="2"
+            android:padding="16dp"
+            android:textColor="@android:color/black"
+            android:gravity="right"
+            android:background="#FFDDDDDD"
+            android:text="Client"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="0px"
+            android:layout_weight="5"
+            android:textColor="@android:color/black"
+            android:padding="16dp"
+            android:text="Client Name"
+            android:textSize="13dp"
+            android:layout_height="wrap_content" android:id="@+id/client_name"/>
+    </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="#ffffff" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:background="#FFDDDDDD"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="0px"
+            android:layout_weight="2"
+            android:padding="16dp"
+            android:textColor="@android:color/black"
+            android:gravity="right"
+            android:text="Opened"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="0px"
+            android:layout_weight="5"
+            android:textColor="@android:color/black"
+            android:padding="16dp" android:textIsSelectable="true"
+            android:text="2015-09-26"
+            android:textSize="13dp"
+            android:layout_height="wrap_content" android:id="@+id/open_date"/>
+    </LinearLayout>
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:background="#ffffff" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:background="#FFDDDDDD"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="0px"
+            android:layout_weight="2"
+            android:padding="16dp"
+            android:textColor="@android:color/black"
+            android:gravity="right"
+            android:text="Status"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:layout_width="0px"
+            android:layout_weight="5"
+            android:textColor="@android:color/black"
+            android:padding="16dp" android:textIsSelectable="true"
+            android:text="Open"
+            android:textSize="13dp"
+            android:layout_height="wrap_content" android:id="@+id/status"/>
+    </LinearLayout>
+
+ </LinearLayout>

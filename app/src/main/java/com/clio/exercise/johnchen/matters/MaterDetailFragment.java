@@ -53,15 +53,18 @@ public class MaterDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.mater_detail)).setText(
-                    "Display Name: " + mItem.displayNumber  + "\n" +
-                    "Client Name:  " + mItem.clientName + "\n" +
-                    "Description:  " + mItem.description + "\n" +
-                    "Open Date: " + mItem.openDate+ "\n" +
-                    "Status: " + mItem.status
-            );
+            View detailView =  rootView.findViewById(R.id.mater_detail);
+            setText(detailView, R.id.display_number, mItem.displayNumber);
+            setText(detailView, R.id.client_name, mItem.clientName);
+            setText(detailView, R.id.description, mItem.description);
+            setText(detailView, R.id.open_date, mItem.openDate);
+            setText(detailView, R.id.status, mItem.status);
         }
 
         return rootView;
+    }
+
+    private void setText(View parentView, int id, String text) {
+        ((TextView)parentView.findViewById(id)).setText(text);
     }
 }
