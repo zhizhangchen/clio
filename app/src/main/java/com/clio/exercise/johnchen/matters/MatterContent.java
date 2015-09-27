@@ -1,10 +1,12 @@
 package com.clio.exercise.johnchen.matters;
 
 import android.app.ProgressDialog;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v4.app.ListFragment;
 import android.widget.ArrayAdapter;
+
+import com.clio.exercise.johnchen.matters.storage.Storage;
+import com.clio.exercise.johnchen.matters.storage.StorageFactory;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -109,7 +111,7 @@ public class MatterContent {
             List<MatterContent.Matter> result = new ArrayList<MatterContent.Matter>();
 
             String JSONResp;
-            SharedPreferences settings = mListFragment.getActivity().getSharedPreferences("matters", 0);
+            Storage storage = StorageFactory.getStorage(mListFragment.getActivity());
             try {
                 URL u = new URL(params[0]);
 
@@ -132,12 +134,9 @@ public class MatterContent {
                 }
 
                 JSONResp = new String(baos.toByteArray());
-                SharedPreferences.Editor editor = settings.edit();
-                editor.putString(JSON_STORAGE_KEY, JSONResp);
-                editor.commit();
-
+                storage.setItem(JSON_STORAGE_KEY, JSONResp);
             } catch (Throwable t) {
-                JSONResp = settings.getString(JSON_STORAGE_KEY, "{\"matters\": []}");
+                JSONResp = storage.getItem(JSON_STORAGE_KEY, "{\"matters\": []}");
                 t.printStackTrace();
             }
 
