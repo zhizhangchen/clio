@@ -66,7 +66,7 @@ public class MaterListFragment extends ListFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        MatterContent.getInstance().update(this, "https://app.goclio.com/api/v2/matters");
+        MatterContent.getInstance().update(this);
 
     }
 
