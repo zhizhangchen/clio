@@ -1,6 +1,7 @@
 package com.clio.exercise.johnchen.matters;
 
 import android.app.ProgressDialog;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v4.app.ListFragment;
 import android.widget.ArrayAdapter;
@@ -83,6 +84,7 @@ public class MatterContent {
 
 
     private class AsyncListViewLoader  extends AsyncTask<String, Void, List<MatterContent.Matter>> {
+        private final String JSON_STORAGE_KEY = "json";
         @Override
         protected void onPostExecute(List<MatterContent.Matter> result) {
             super.onPostExecute(result);
@@ -106,6 +108,8 @@ public class MatterContent {
         protected List<MatterContent.Matter> doInBackground(String... params) {
             List<MatterContent.Matter> result = new ArrayList<MatterContent.Matter>();
 
+            String JSONResp;
+            SharedPreferences settings = mListFragment.getActivity().getSharedPreferences("matters", 0);
             try {
                 URL u = new URL(params[0]);
 
@@ -127,8 +131,17 @@ public class MatterContent {
                     Arrays.fill(b, (byte) 0);
                 }
 
-                String JSONResp = new String(baos.toByteArray());
+                JSONResp = new String(baos.toByteArray());
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString(JSON_STORAGE_KEY, JSONResp);
+                editor.commit();
 
+            } catch (Throwable t) {
+                JSONResp = settings.getString(JSON_STORAGE_KEY, "{\"matters\": []}");
+                t.printStackTrace();
+            }
+
+            try {
                 JSONObject obj = new JSONObject(JSONResp);
                 JSONArray arr = obj.getJSONArray("matters");
                 for (int i = 0; i < arr.length(); i++) {
@@ -136,10 +149,9 @@ public class MatterContent {
                     result.add(matter);
                     addItem(matter);
                 }
-
                 return result;
-            } catch (Throwable t) {
-                t.printStackTrace();
+            }catch (JSONException e) {
+                e.printStackTrace();
             }
             return null;
         }
