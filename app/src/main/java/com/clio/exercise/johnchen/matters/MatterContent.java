@@ -51,6 +51,7 @@ public class MatterContent {
 
     /**
      * Refresh list adapter with {@param json}
+     *
      * @returns number of matters set to the list adapter
      */
     public int updateListAdaptor(String json) {
@@ -72,17 +73,23 @@ public class MatterContent {
             for (int i = 0; i < arr.length(); i++) {
                 addItem(arr.getJSONObject(i));
             }
+            notifyDatasetChanged();
+            return arr.length();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public void notifyDatasetChanged(){
+        if (mListAdapter != null) {
             mListFragment.getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     mListAdapter.notifyDataSetChanged();
                 }
             });
-            return arr.length();
-        }catch (JSONException e) {
-            e.printStackTrace();
         }
-        return 0;
     }
 
 
@@ -101,7 +108,7 @@ public class MatterContent {
         updateListAdaptor(null);
     }
 
-    private void addItem(JSONObject obj) throws JSONException {
+    public void addItem(JSONObject obj) throws JSONException {
         Matter item = MatterContent.getInstance().convertMatter(obj);
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
@@ -109,12 +116,14 @@ public class MatterContent {
 
     private Matter convertMatter(JSONObject obj) throws JSONException {
         Matter matter = new Matter();
-        matter.id = obj.getString("id");
-        matter.displayNumber = obj.getString("display_number");
-        matter.clientName = obj.getJSONObject("client").getString("name");
-        matter.description = obj.getString("description");
-        matter.status = obj.getString("status");
-        matter.openDate = obj.getString("open_date");
+        matter.id = obj.optString("id");
+        matter.displayNumber = obj.optString("display_number");
+        JSONObject client = obj.optJSONObject("client");
+        if (client != null)
+            matter.clientName = client.optString("name");
+        matter.description = obj.optString("description");
+        matter.status = obj.optString("status");
+        matter.openDate = obj.optString("open_date");
         return matter;
     }
 

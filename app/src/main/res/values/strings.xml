@@ -3,4 +3,5 @@
     <string name="title_mater_detail">Mater Detail</string>
     <string name="authorities">com.clio.exercies.johnchen.matters.provider</string>
     <string name="account_type">clio.com</string>
+    <string name="import_from_gmail">Import from Gmail</string>
 </resources>
