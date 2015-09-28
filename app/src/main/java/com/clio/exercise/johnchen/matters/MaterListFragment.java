@@ -1,10 +1,16 @@
 package com.clio.exercise.johnchen.matters;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
+
+import com.clio.exercise.johnchen.matters.importing.gmail.GmailActivity;
 
 /**
  * A list fragment representing a list of Maters. This fragment
@@ -67,7 +73,27 @@ public class MaterListFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         MatterContent.getInstance().update(this);
+        setHasOptionsMenu(true);
 
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_main, menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.import_from_gmail:
+                Intent i = new Intent(this.getActivity(), GmailActivity.class);
+                getActivity().startActivity(i);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     @Override

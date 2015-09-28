@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Matters</string>
     <string name="title_mater_detail">Mater Detail</string>
+    <string name="title_gmail_importing">Import from Gmail</string>
     <string name="authorities">com.clio.exercies.johnchen.matters.provider</string>
     <string name="account_type">clio.com</string>
 </resources>

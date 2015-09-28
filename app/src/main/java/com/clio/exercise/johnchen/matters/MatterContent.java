@@ -54,6 +54,8 @@ public class MatterContent {
      * @returns number of matters set to the list adapter
      */
     public int updateListAdaptor(String json) {
+        if (mListAdapter == null)
+            return 0;
         Storage storage = StorageFactory.getStorage(mListFragment.getContext());
         if (json != null)
             storage.setItem(JSON_STORAGE_KEY, json);

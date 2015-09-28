@@ -3,6 +3,9 @@ package com.clio.exercise.johnchen.matters;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuInflater;
 
 
 /**
@@ -21,7 +24,7 @@ import android.support.v4.app.FragmentActivity;
  * {@link MaterListFragment.Callbacks} interface
  * to listen for item selections.
  */
-public class MaterListActivity extends FragmentActivity
+public class MaterListActivity extends AppCompatActivity
         implements MaterListFragment.Callbacks {
 
     /**
