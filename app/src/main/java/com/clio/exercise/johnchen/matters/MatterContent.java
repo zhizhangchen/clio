@@ -55,11 +55,14 @@ public class MatterContent {
      * @returns number of matters set to the list adapter
      */
     public int updateListAdaptor(String json) {
+        if (mListAdapter == null)
+            return 0;
+
         Storage storage = StorageFactory.getStorage(mListFragment.getContext());
         if (json != null)
             storage.setItem(JSON_STORAGE_KEY, json);
 
-        if (json == null)
+        if (json == null && ITEMS.isEmpty() )
             json = storage.getItem(JSON_STORAGE_KEY, "{\"matters\": []}");
 
         if (json == null)
@@ -73,7 +76,7 @@ public class MatterContent {
             for (int i = 0; i < arr.length(); i++) {
                 addItem(arr.getJSONObject(i));
             }
-            notifyDatasetChanged();
+            notifyDataSetChanged();
             return arr.length();
         } catch (JSONException e) {
             e.printStackTrace();
@@ -81,7 +84,7 @@ public class MatterContent {
         return 0;
     }
 
-    public void notifyDatasetChanged(){
+    public void notifyDataSetChanged(){
         if (mListAdapter != null) {
             mListFragment.getActivity().runOnUiThread(new Runnable() {
                 @Override
@@ -108,14 +111,25 @@ public class MatterContent {
         updateListAdaptor(null);
     }
 
+    /**
+     * Add an item into the content containers.
+     */
     public void addItem(JSONObject obj) throws JSONException {
         Matter item = MatterContent.getInstance().convertMatter(obj);
         ITEMS.add(item);
         ITEM_MAP.put(item.id, item);
     }
 
-    private Matter convertMatter(JSONObject obj) throws JSONException {
-        Matter matter = new Matter();
+    /**
+     * Update an item with new data
+     */
+    public synchronized void updateItem(JSONObject obj) throws JSONException {
+        Matter matter = ITEM_MAP.get(obj.getString("id"));
+        fillMatter(matter, obj);
+        notifyDataSetChanged();
+    }
+
+    private void fillMatter(Matter matter, JSONObject obj) {
         matter.id = obj.optString("id");
         matter.displayNumber = obj.optString("display_number");
         JSONObject client = obj.optJSONObject("client");
@@ -124,6 +138,10 @@ public class MatterContent {
         matter.description = obj.optString("description");
         matter.status = obj.optString("status");
         matter.openDate = obj.optString("open_date");
+    }
+    private Matter convertMatter(JSONObject obj) throws JSONException {
+        Matter matter = new Matter();
+        fillMatter(matter, obj);
         return matter;
     }
 

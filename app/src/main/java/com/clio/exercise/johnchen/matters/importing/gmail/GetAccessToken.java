@@ -29,7 +29,10 @@ public class GetAccessToken {
     }
     Map<String, String> mapn;
 
-    public JSONObject gettoken(String address,String token,String client_id,String client_secret,String redirect_uri,String grant_type) {
+    /**
+     * Get an access token, which is required to call Gmail APIs
+     */
+    public JSONObject getToken(String address,String token,String client_id,String client_secret,String redirect_uri,String grant_type) {
         // Making HTTP request
         try {
             URL u = new URL(address);
@@ -86,7 +89,6 @@ public class GetAccessToken {
         } catch (JSONException e) {
             Log.e("JSON Parser", "Error parsing data " + e.toString());
         }
-        // Return JSON String
         return jObj;
     }
 
@@ -109,5 +111,4 @@ public class GetAccessToken {
 
         return result.toString();
     }
-
 }

@@ -26,16 +26,13 @@ import com.clio.exercise.johnchen.matters.R;
 public class GmailImport {
 
     private static String CLIENT_ID = "1076117038029-v8sl0ejctm80lh8f7tfsb661svdmlo6h.apps.googleusercontent.com";
-    //Use your own client id
     private static String CLIENT_SECRET ="NlGf_petkWI6QLOKMPtx0236";
-    //Use your own client secret
     private static String REDIRECT_URI="http://localhost";
     private static String GRANT_TYPE="authorization_code";
     private static String TOKEN_URL ="https://accounts.google.com/o/oauth2/token";
     private static String OAUTH_URL ="https://accounts.google.com/o/oauth2/auth";
     private static String OAUTH_SCOPE="https://www.googleapis.com/auth/gmail.readonly";
     private final Context mContext;
-    //Change the Scope as you need
     WebView web;
     SharedPreferences pref;
     TextView Access;
@@ -44,28 +41,28 @@ public class GmailImport {
         mContext = context;
     }
 
+    /**
+     * Start importing Gmail threads into matters
+     */
     public void start() {
         pref = mContext.getSharedPreferences("AppPref", 0);
         final Dialog auth_dialog;
 
-        // TODO Auto-generated method stub
+        //Start a WebView dialog to get user approval and get an authorization code
         auth_dialog = new Dialog(mContext);
         auth_dialog.setContentView(R.layout.auth_dialog);
         web = (WebView) auth_dialog.findViewById(R.id.webv);
         web.getSettings().setJavaScriptEnabled(true);
         web.loadUrl(OAUTH_URL + "?redirect_uri=" + REDIRECT_URI + "&response_type=code&client_id=" + CLIENT_ID + "&scope=" + OAUTH_SCOPE);
         web.setWebViewClient(new WebViewClient() {
-
             boolean authComplete = false;
             Intent resultIntent = new Intent();
+            String authCode;
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-
             }
-
-            String authCode;
 
             @Override
             public void onPageFinished(WebView view, String url) {
@@ -81,6 +78,7 @@ public class GmailImport {
                     edit.putString("Code", authCode);
                     edit.commit();
                     auth_dialog.dismiss();
+                    // Start getting access token
                     new TokenGet().execute();
                 } else if (url.contains("error=access_denied")) {
                     Log.i("", "ACCESS_DENIED_HERE");
@@ -92,7 +90,7 @@ public class GmailImport {
             }
         });
         auth_dialog.show();
-        auth_dialog.setTitle("Authorize Learn2Crack");
+        auth_dialog.setTitle("Authorize Clio");
         auth_dialog.setCancelable(true);
     }
 
@@ -113,7 +111,7 @@ public class GmailImport {
         @Override
         protected JSONObject doInBackground(String... args) {
             GetAccessToken jParser = new GetAccessToken();
-            JSONObject json = jParser.gettoken(TOKEN_URL,Code,CLIENT_ID,CLIENT_SECRET,REDIRECT_URI,GRANT_TYPE);
+            JSONObject json = jParser.getToken(TOKEN_URL,Code,CLIENT_ID,CLIENT_SECRET,REDIRECT_URI,GRANT_TYPE);
             return json;
         }
 
@@ -131,6 +129,7 @@ public class GmailImport {
                     Log.d("Token Access", tok);
                     Log.d("Expire", expire);
                     Log.d("Refresh", refresh);
+                    // Fetch Gmail threads and import them as matters after we get an access token
                     new GetThreads(mContext, tok, Access).execute();
 
                 } catch (JSONException e) {
