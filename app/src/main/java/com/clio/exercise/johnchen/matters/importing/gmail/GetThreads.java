@@ -3,19 +3,17 @@ package com.clio.exercise.johnchen.matters.importing.gmail;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
-import android.util.Log;
 import android.widget.TextView;
 
+import com.clio.exercise.johnchen.matters.JSONUtil;
 import com.clio.exercise.johnchen.matters.MatterContent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -26,24 +24,25 @@ import java.util.Date;
  */
 public class GetThreads extends AsyncTask<String, String, JSONObject> {
     private final TextView mResult;
-    private ProgressDialog pDialog;
+    private ProgressDialog mDialog;
     private Context mContext;
     private String mAccessToken;
-    private String GET_THREAD_URL_PATTERN = "https://www.googleapis.com/gmail/v1/users/me/threads/%s?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date&fields=messages/payload";
+    private final String GET_THREAD_URL_PATTERN = "https://www.googleapis.com/gmail/v1/users/me/threads/%s?format=metadata&metadataHeaders=From&metadataHeaders=Subject&metadataHeaders=Date&fields=messages/payload";
 
     public GetThreads(Context context, String accessToken, TextView result) {
         mContext = context;
         mAccessToken = accessToken;
         mResult = result;
     }
+
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
-        pDialog = new ProgressDialog(mContext);
-        pDialog.setMessage("Contacting Google ...");
-        pDialog.setIndeterminate(false);
-        pDialog.setCancelable(true);
-        pDialog.show();
+        mDialog = new ProgressDialog(mContext);
+        mDialog.setMessage("Contacting Google ...");
+        mDialog.setIndeterminate(false);
+        mDialog.setCancelable(true);
+        mDialog.show();
     }
 
     @Override
@@ -53,7 +52,7 @@ public class GetThreads extends AsyncTask<String, String, JSONObject> {
 
     @Override
     protected void onPostExecute(JSONObject json) {
-        pDialog.dismiss();
+        mDialog.dismiss();
         if (json != null) {
             try {
                 JSONArray threads = json.getJSONArray("threads");
@@ -78,7 +77,6 @@ public class GetThreads extends AsyncTask<String, String, JSONObject> {
 
     private JSONObject fetchJSONObject(String url) {
         InputStream is = null;
-        String json = "{}";
         try {
             URL u = new URL(url);
             HttpURLConnection conn = (HttpURLConnection) u.openConnection();
@@ -90,37 +88,13 @@ public class GetThreads extends AsyncTask<String, String, JSONObject> {
             conn.setRequestProperty("Authorization", "Bearer " + mAccessToken);
             conn.connect();
             is = conn.getInputStream();
+            return JSONUtil.readJSONObject(is);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(
-                    is, "iso-8859-1"), 8);
-            StringBuilder sb = new StringBuilder();
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                sb.append(line);
-            }
-            is.close();
-
-            json = sb.toString();
-            Log.e("JSONStr", json);
-        } catch (Exception e) {
-            e.getMessage();
-            Log.e("Buffer Error", "Error converting result " + e.toString());
-        }
-        // Parse the String to a JSON Object
-        JSONObject jObj = null;
-        try {
-            jObj = new JSONObject(json);
-        } catch (JSONException e) {
-            Log.e("JSON Parser", "Error parsing data " + e.toString());
-        }
-        // Return JSON String
-        return jObj;
-
+        return null;
     }
 
     private class GetThread extends AsyncTask<String, String, JSONObject> {

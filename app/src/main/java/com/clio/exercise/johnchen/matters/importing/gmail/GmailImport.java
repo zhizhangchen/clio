@@ -6,18 +6,14 @@ import org.json.JSONObject;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
-import android.os.Bundle;
-import android.app.Activity;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.util.Log;
-import android.view.View;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 

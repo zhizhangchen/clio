@@ -53,24 +53,29 @@ public class MatterContent {
      * Refresh list adapter with {@param json}
      *
      * @returns number of matters set to the list adapter
+     * @param json
      */
-    public int updateListAdaptor(String json) {
+    public int updateListAdaptor(JSONObject json) {
         if (mListAdapter == null)
             return 0;
 
         Storage storage = StorageFactory.getStorage(mListFragment.getContext());
         if (json != null)
-            storage.setItem(JSON_STORAGE_KEY, json);
+            storage.setItem(JSON_STORAGE_KEY, json.toString());
 
-        if (json == null && ITEMS.isEmpty() )
-            json = storage.getItem(JSON_STORAGE_KEY, "{\"matters\": []}");
+        if (json == null && ITEMS.isEmpty() ) {
+            try {
+                json = new JSONObject(storage.getItem(JSON_STORAGE_KEY, "{\"matters\": []}"));
+            }catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
 
         if (json == null)
             return 0;
 
         try {
-            JSONObject obj = new JSONObject(json);
-            JSONArray arr = obj.getJSONArray("matters");
+            JSONArray arr = json.getJSONArray("matters");
             ITEM_MAP.clear();
             ITEMS.clear();
             for (int i = 0; i < arr.length(); i++) {
@@ -94,7 +99,6 @@ public class MatterContent {
             });
         }
     }
-
 
     /**
      * Save {@param fragment} for future use and update it with stored data

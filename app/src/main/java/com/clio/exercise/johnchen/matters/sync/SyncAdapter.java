@@ -11,14 +11,13 @@ import android.os.Bundle;
 import android.util.Log;
 
 import com.clio.exercise.johnchen.matters.MatterContent;
+import com.clio.exercise.johnchen.matters.JSONUtil;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Arrays;
 
 /**
  * Handle the transfer of data between a server and an
@@ -88,17 +87,7 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
 
             conn.connect();
             InputStream is = conn.getInputStream();
-
-            // Read the stream
-            byte[] b = new byte[1024];
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-            while (is.read(b) != -1) {
-                baos.write(b);
-                Arrays.fill(b, (byte) 0);
-            }
-
-            syncResult.stats.numEntries += MatterContent.getInstance().updateListAdaptor(new String(baos.toByteArray()));
+            syncResult.stats.numEntries += MatterContent.getInstance().updateListAdaptor(JSONUtil.readJSONObject(is));
         } catch (MalformedURLException e) {
             Log.e(TAG, "Feed URL is malformed", e);
             syncResult.stats.numParseExceptions++;
